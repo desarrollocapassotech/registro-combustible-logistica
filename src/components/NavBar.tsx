@@ -5,7 +5,7 @@ import { LogOut, Menu, X } from "lucide-react";
 import { auth } from "@/firebase";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import AppLogo from "@/components/AppLogo";
+import VialtoLogo from "@/components/VialtoLogo";
 
 interface NavItem {
   label: string;
@@ -71,14 +71,11 @@ const NavBar: React.FC<{
   }, [mobileMenuOpen]);
 
   return (
-    <nav className="bg-[#213b5d] text-white shadow-md z-50 fixed top-0 left-0 right-0 w-full max-w-full">
-      {/* Header con logo, título y menú sandwich en todos los tamaños */}
+    <nav className="bg-[#1A1A1A] text-white shadow-md z-50 fixed top-0 left-0 right-0 w-full max-w-full">
+      {/* Header: logo Vialto + menú */}
       <div className="flex items-center justify-between px-4 py-3 md:px-6">
-        <div className="flex items-center space-x-2 md:space-x-4 min-w-0 flex-1">
-          <AppLogo logoUrl={logoUrl} alt="Logo" className="h-6 md:h-8 flex-shrink-0" />
-          <span className="font-semibold text-sm md:text-base truncate">
-            Sistema de registro de cargas de combustible
-          </span>
+        <div className="flex items-center min-w-0 flex-1">
+          <VialtoLogo variant="dark" showTagline={false} />
         </div>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -108,7 +105,7 @@ const NavBar: React.FC<{
             className="absolute left-0 top-0 bottom-0 bg-white w-72 max-w-[85vw] p-4 shadow-xl overflow-y-auto"
           >
             <div className="flex flex-col space-y-1 mt-2">
-              <p className="bg-[#213b5d] text-white text-center text-base font-semibold py-2 px-4 rounded mb-4">
+              <p className="bg-[#1A1A1A] text-white text-center text-base font-semibold py-2 px-4 rounded mb-4 font-sans">
                 {userName || "Usuario"}
                 <br />
                 <span className="text-sm font-normal opacity-90">
@@ -128,7 +125,7 @@ const NavBar: React.FC<{
                     navigate(item.path);
                     setMobileMenuOpen(false);
                   }}
-                  className="text-left px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors font-medium"
+                  className="text-left px-4 py-3 text-[#1A1A1A] hover:bg-[#E8470A]/10 hover:text-[#E8470A] rounded-lg transition-colors font-medium font-sans"
                 >
                   {item.label}
                 </button>

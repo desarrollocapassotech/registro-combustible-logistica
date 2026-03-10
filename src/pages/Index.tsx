@@ -293,7 +293,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F8F5EE]">
       <NavBar
         userRole={userRole}
         userName={userName}
@@ -310,7 +310,7 @@ const Index = () => {
           {/* Bienvenida */}
           {userName && (
             <div className="text-center">
-              <h1 className="text-2xl font-bold text-gray-800">Bienvenido, {userName}</h1>
+              <h1 className="text-2xl font-display font-normal text-[#1A1A1A] tracking-tight">Bienvenido, {userName}</h1>
               <p className="text-sm text-gray-500">
                 {userRole === "CHOFER"
                   ? "Chofer"
@@ -330,10 +330,10 @@ const Index = () => {
                 onClick={() => navigate("/admin/empresas")}
                 className="bg-white rounded-lg shadow-md p-4 flex items-center justify-start space-x-4 cursor-pointer hover:shadow-lg transition-shadow"
               >
-                <Building2 className="h-8 w-8 text-[#213b5d]" />
+                <Building2 className="h-8 w-8 text-[#E8470A]" />
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500">Gestión de Empresas</span>
-                  <span className="text-base text-[#213b5d]">Crear y administrar empresas</span>
+                  <span className="text-base text-[#E8470A]">Crear y administrar empresas</span>
                 </div>
               </div>
               <h3 className="text-lg font-semibold text-gray-800">Ingresar a una empresa</h3>
@@ -345,7 +345,7 @@ const Index = () => {
                     className="bg-white rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer hover:shadow-lg transition-shadow"
                   >
                     <span className="font-medium">{e.nombre}</span>
-                    <span className="text-sm text-[#213b5d]">Entrar →</span>
+                    <span className="text-sm text-[#E8470A]">Entrar →</span>
                   </div>
                 ))}
                 {empresas.length === 0 && (
@@ -375,10 +375,10 @@ const Index = () => {
                   onClick={() => navigate("/admin/choferes")}
                   className="bg-white rounded-lg shadow-md p-4 flex items-center justify-start space-x-4 cursor-pointer hover:shadow-lg transition-shadow"
                 >
-                  <Truck className="h-8 w-8 text-[#213b5d]" />
+                  <Truck className="h-8 w-8 text-[#E8470A]" />
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">Choferes Registrados</span>
-                    <span className="text-2xl font-bold text-[#213b5d]">{driverCount}</span>
+                    <span className="text-2xl font-bold text-[#E8470A]">{driverCount}</span>
                   </div>
                 </div>
               )}
@@ -387,10 +387,10 @@ const Index = () => {
                   href="#historial"
                   className="bg-white rounded-lg shadow-md p-4 flex items-center justify-start space-x-4 cursor-pointer hover:shadow-lg transition-shadow"
                 >
-                  <Calendar className="h-8 w-8 text-[#213b5d]" />
+                  <Calendar className="h-8 w-8 text-[#E8470A]" />
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">Cargas este mes</span>
-                    <span className="text-2xl font-bold text-[#213b5d]">{monthlyLoadCount}</span>
+                    <span className="text-2xl font-bold text-[#E8470A]">{monthlyLoadCount}</span>
                   </div>
                 </a>
               )}
@@ -405,7 +405,7 @@ const Index = () => {
                   setEditLoad(null);
                   setIsFormOpen(true);
                 }}
-                className="w-full sm:w-auto bg-[#213b5d] hover:bg-[#b44d35]"
+                className="w-full sm:w-auto bg-[#E8470A] hover:bg-[#FF6B2B]"
               >
                 <PlusCircle size={20} className="mr-2" />
                 Nueva Carga

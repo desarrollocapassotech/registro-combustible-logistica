@@ -47,7 +47,7 @@ const DriverManagement = () => {
           <Button
             type="button"
             variant="ghost"
-            className="text-[#b44d35]"
+            className="text-[#FF6B2B]"
             onClick={() => navigate("/inicio", { replace: true })}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -64,7 +64,7 @@ const DriverManagement = () => {
           placeholder="Buscar por nombre, apellido o DNI..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md focus:border-[#213b5d]"
+          className="w-full p-2 border border-gray-300 rounded-md focus:border-[#E8470A]"
         />
 
         <UserManagement filter={filter} empresaId={empresaId} />

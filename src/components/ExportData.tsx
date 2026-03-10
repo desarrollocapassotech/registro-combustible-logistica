@@ -107,7 +107,7 @@ const ExportData = ({ loads }: ExportDataProps) => {
       </div>
       <Button
         onClick={handleExport}
-        className="w-full bg-[#213b5d] hover:bg-[#b44d35]"
+        className="w-full bg-[#E8470A] hover:bg-[#FF6B2B]"
       >
         <DownloadCloud size={20} />
         Exportar a Excel

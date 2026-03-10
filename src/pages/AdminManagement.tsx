@@ -150,7 +150,7 @@ const AdminManagement = () => {
           <Button
             type="button"
             variant="ghost"
-            className="text-[#b44d35]"
+            className="text-[#FF6B2B]"
             onClick={() => navigate("/inicio", { replace: true })}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -162,7 +162,7 @@ const AdminManagement = () => {
 
         <Button
           onClick={() => setIsFormOpen(true)}
-          className="w-full bg-[#213b5d] hover:bg-[#b44d35]"
+          className="w-full bg-[#E8470A] hover:bg-[#FF6B2B]"
         >
           <PlusCircle size={20} className="mr-2" />
           Agregar Administrador
@@ -179,7 +179,7 @@ const AdminManagement = () => {
                 key={admin.id}
                 className="border rounded-lg p-4 bg-white hover:bg-gray-50 transition-colors flex items-center gap-3"
               >
-                <Shield className="h-8 w-8 text-[#213b5d] flex-shrink-0" />
+                <Shield className="h-8 w-8 text-[#E8470A] flex-shrink-0" />
                 <div>
                   <h3 className="font-medium text-gray-900">{`${admin.name} ${admin.lastName}`}</h3>
                   <p className="text-sm text-gray-500">{admin.email}</p>
@@ -230,7 +230,7 @@ const AdminManagement = () => {
               <Button type="button" variant="outline" onClick={resetForm}>
                 Cancelar
               </Button>
-              <Button type="submit" className="bg-[#213b5d] hover:bg-[#b44d35]" disabled={isSubmitting}>
+              <Button type="submit" className="bg-[#E8470A] hover:bg-[#FF6B2B]" disabled={isSubmitting}>
                 {isSubmitting ? "Creando..." : "Crear Administrador"}
               </Button>
             </DialogFooter>

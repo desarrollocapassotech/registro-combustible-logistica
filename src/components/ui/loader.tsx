@@ -7,7 +7,7 @@ const Loader = () => {
         <p className="text-lg text-gray-800">Cargando...</p>
         <div className="mt-4 ml-6">
           <svg
-            className="animate-spin h-8 w-8 text-[#213b5d]"
+            className="animate-spin h-8 w-8 text-[#E8470A]"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"

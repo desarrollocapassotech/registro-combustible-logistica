@@ -201,7 +201,7 @@ const UserManagement = ({ filter, empresaId }: UserManagementProps) => {
                     setEditUser(null);
                     setIsFormOpen(true);
                 }}
-                className="w-full bg-[#213b5d] hover:bg-[#b44d35]"
+                className="w-full bg-[#E8470A] hover:bg-[#FF6B2B]"
             >
                 <PlusCircle size={20} />
                 Agregar Chofer
@@ -274,7 +274,7 @@ const UserManagement = ({ filter, empresaId }: UserManagementProps) => {
                                 name="dni"
                                 defaultValue={editUser?.dni || ""}
                                 required
-                                className="mt-1 block w-full border-gray-300 focus:border-[#213b5d]"
+                                className="mt-1 block w-full border-gray-300 focus:border-[#E8470A]"
                             />
                         </div>
                         <div className="mb-4">
@@ -284,7 +284,7 @@ const UserManagement = ({ filter, empresaId }: UserManagementProps) => {
                                 name="lastName"
                                 defaultValue={editUser?.lastName || ""}
                                 required
-                                className="mt-1 block w-full border-gray-300 focus:border-[#213b5d]"
+                                className="mt-1 block w-full border-gray-300 focus:border-[#E8470A]"
                             />
                         </div>
                         <div className="mb-4">
@@ -294,7 +294,7 @@ const UserManagement = ({ filter, empresaId }: UserManagementProps) => {
                                 name="name"
                                 defaultValue={editUser?.name || ""}
                                 required
-                                className="mt-1 block w-full border-gray-300 focus:border-[#213b5d]"
+                                className="mt-1 block w-full border-gray-300 focus:border-[#E8470A]"
                             />
                         </div>
                         <div className="mb-4">
@@ -304,7 +304,7 @@ const UserManagement = ({ filter, empresaId }: UserManagementProps) => {
                                 name="patente"
                                 defaultValue={editUser?.patente || ""}
                                 required
-                                className="mt-1 block w-full border-gray-300 focus:border-[#213b5d]"
+                                className="mt-1 block w-full border-gray-300 focus:border-[#E8470A]"
                             />
                         </div>
                         <div className="mb-4">
@@ -327,11 +327,11 @@ const UserManagement = ({ filter, empresaId }: UserManagementProps) => {
                                         e.target.value = value.slice(0, 4); // Limitar a 4 dígitos
                                     }
                                 }}
-                                className="mt-1 block w-full border-gray-300 focus:border-[#213b5d]"
+                                className="mt-1 block w-full border-gray-300 focus:border-[#E8470A]"
                             />
                         </div>
                         <DialogFooter>
-                            <Button type="submit" className="px-4 py-2 bg-[#213b5d] text-white rounded" disabled={isLoading}>
+                            <Button type="submit" className="px-4 py-2 bg-[#E8470A] text-white rounded" disabled={isLoading}>
                                 Guardar
                             </Button>
                         </DialogFooter>
@@ -383,7 +383,7 @@ const UserManagement = ({ filter, empresaId }: UserManagementProps) => {
                                 setShowConfirmation(false);
                                 if (formData) saveUserData(formData); // Continuar con el guardado
                             }}
-                            className="bg-[#213b5d] text-white"
+                            className="bg-[#E8470A] text-white"
                         >
                             <Check size={20} />
                             Continuar

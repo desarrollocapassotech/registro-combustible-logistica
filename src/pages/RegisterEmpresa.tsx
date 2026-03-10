@@ -13,6 +13,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, db, storage } from "@/firebase";
 import { empresaConverter } from "@/converters/empresaConverter";
 import AppLogo from "@/components/AppLogo";
+import VialtoLogo from "@/components/VialtoLogo";
 import { Empresa } from "@/types/empresa";
 
 const normalizeCuit = (v: string) => v.replace(/\D/g, "");
@@ -183,10 +184,10 @@ const RegisterEmpresa = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#213b5d] flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-[#1A1A1A] flex flex-col items-center justify-center px-4">
       <div className="text-center mb-8">
-        <AppLogo logoUrl={logoPreview} alt="Logo" className="w-32 mx-auto mb-4 sm:w-40" />
-        <h2 className="text-xl font-bold text-white sm:text-2xl">Registro de Empresa</h2>
+        <VialtoLogo variant="dark" showTagline className="mx-auto mb-4" />
+        <h2 className="text-xl font-display font-normal text-white sm:text-2xl mt-4 tracking-tight">Registro de Empresa</h2>
         <p className="text-sm text-gray-300">Crear una nueva empresa</p>
       </div>
 
@@ -238,7 +239,7 @@ const RegisterEmpresa = () => {
                 </div>
               )}
               <label className="cursor-pointer">
-                <span className="text-sm text-[#213b5d] hover:underline">
+                <span className="text-sm text-[#E8470A] hover:underline">
                   {logoFile ? "Cambiar imagen" : "Seleccionar imagen"}
                 </span>
                 <input
@@ -280,7 +281,7 @@ const RegisterEmpresa = () => {
 
           <Button
             type="submit"
-            className="w-full bg-[#213b5d] hover:bg-[#b44d35]"
+            className="w-full bg-[#E8470A] hover:bg-[#FF6B2B]"
             disabled={isLoading}
           >
             {isLoading ? "Registrando..." : "Crear empresa"}
@@ -308,7 +309,7 @@ const RegisterEmpresa = () => {
             <button
               type="button"
               onClick={() => navigate("/login-administrador")}
-              className="text-[#213b5d] font-medium hover:underline"
+              className="text-[#E8470A] font-medium hover:underline"
             >
               Iniciar sesión
             </button>

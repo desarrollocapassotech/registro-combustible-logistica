@@ -184,15 +184,13 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#213b5d] flex flex-col items-center justify-center px-4">
-      {/* Logo, título y subtítulo */}
+    <div className="min-h-screen bg-[#1A1A1A] flex flex-col items-center justify-center px-4">
+      {/* Logo empresa (si seleccionada) + título */}
       <div className="text-center mb-8">
-        <AppLogo
-          logoUrl={selectedEmpresa?.logoUrl}
-          alt="Logo"
-          className="w-32 mx-auto mb-4 sm:w-40"
-        />
-        <h2 className="text-xl font-bold text-white sm:text-2xl">¡Hola, chofer!</h2>
+        {selectedEmpresa?.logoUrl ? (
+          <AppLogo logoUrl={selectedEmpresa.logoUrl} alt="Logo empresa" className="w-24 mx-auto mb-4 sm:w-28" />
+        ) : null}
+        <h2 className="text-xl font-display font-normal text-white sm:text-2xl tracking-tight">¡Hola, chofer!</h2>
         <p className="text-sm text-gray-300">Ingresá tus datos para registrar las cargas de combustible</p>
       </div>
 
@@ -278,7 +276,7 @@ const Login = () => {
             value={password}
             maxLength={4}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border-gray-300 focus:border-[#213b5d]"
+            className="w-full border-gray-300 focus:border-[#E8470A] focus:ring-[#E8470A]"
             required
           />
           <div className="flex items-center space-x-2">
@@ -297,7 +295,7 @@ const Login = () => {
           {/* Botón de inicio de sesión */}
           <Button
             type="submit"
-            className="w-full bg-[#213b5d] hover:bg-[#b44d35] text-white transition-colors py-2"
+            className="w-full bg-[#E8470A] hover:bg-[#FF6B2B] text-white transition-colors py-2"
             disabled={isLoading}
           >
             {isLoading ? "Entrando..." : "Iniciar Sesión"}
@@ -307,7 +305,7 @@ const Login = () => {
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="text-sm text-[#213b5d] font-medium hover:underline"
+              className="text-sm text-[#E8470A] font-medium hover:underline"
             >
               ← Volver
             </button>
@@ -315,15 +313,8 @@ const Login = () => {
         </form>
       </div>
       {/* Texto de desarrollo y enlace */}
-      <div className="mt-8 text-center text-gray-400 text-sm">
-        <a
-          href="https://capassotech.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:underline"
-        >
-          Desarrollado por CapassoTech
-        </a>
+      <div className="mt-8 text-center text-white/50 text-sm font-sans">
+        <span>Vialto · Sistema de registro de combustible</span>
       </div>
     </div>
   );

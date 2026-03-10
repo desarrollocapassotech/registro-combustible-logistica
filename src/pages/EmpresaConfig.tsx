@@ -142,7 +142,7 @@ const EmpresaConfig = () => {
           <Button
             type="button"
             variant="ghost"
-            className="text-[#b44d35]"
+            className="text-[#FF6B2B]"
             onClick={() => navigate("/inicio", { replace: true })}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -151,7 +151,7 @@ const EmpresaConfig = () => {
         </div>
 
         <h1 className="text-2xl font-bold text-gray-800 text-center flex items-center justify-center gap-2">
-          <Building2 className="h-7 w-7 text-[#213b5d]" />
+          <Building2 className="h-7 w-7 text-[#E8470A]" />
           Datos de la empresa
         </h1>
 
@@ -198,7 +198,7 @@ const EmpresaConfig = () => {
                   </div>
                 )}
                 <label className="cursor-pointer">
-                  <span className="text-sm text-[#213b5d] hover:underline">
+                  <span className="text-sm text-[#E8470A] hover:underline">
                     {logoFile ? "Cambiar imagen" : "Cambiar logo"}
                   </span>
                   <input
@@ -212,7 +212,7 @@ const EmpresaConfig = () => {
             </div>
             <Button
               type="submit"
-              className="w-full bg-[#213b5d] hover:bg-[#b44d35]"
+              className="w-full bg-[#E8470A] hover:bg-[#FF6B2B]"
               disabled={isSaving}
             >
               {isSaving ? "Guardando..." : "Guardar cambios"}

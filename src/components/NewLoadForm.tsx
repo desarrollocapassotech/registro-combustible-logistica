@@ -211,7 +211,7 @@ const NewLoadForm = ({
             onChange={(e) =>
               setFormData({ ...formData, serviceStation: e.target.value })
             }
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#213b5d]"
+            className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#E8470A]"
           >
             <option value="YPF">YPF</option>
             <option value="GOTTIG">GOTTIG</option>
@@ -234,7 +234,7 @@ const NewLoadForm = ({
               onChange={(e) =>
                 setFormData({ ...formData, paymentMethod: e.target.value })
               }
-              className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#213b5d]"
+              className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#E8470A]"
             >
               <option value="EFECTIVO">Efectivo</option>
               <option value="TARJETA">Tarjeta</option>
@@ -254,7 +254,7 @@ const NewLoadForm = ({
           </Button>
           <Button
             type="submit"
-            className="w-full sm:w-auto bg-[#213b5d] hover:bg-[#b44d35]"
+            className="w-full sm:w-auto bg-[#E8470A] hover:bg-[#FF6B2B]"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Cargando..." : "Guardar"}

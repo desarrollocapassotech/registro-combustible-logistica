@@ -134,7 +134,7 @@ const EmpresasManagement = () => {
           <Button
             type="button"
             variant="ghost"
-            className="text-[#b44d35]"
+            className="text-[#FF6B2B]"
             onClick={() => navigate("/inicio", { replace: true })}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -146,7 +146,7 @@ const EmpresasManagement = () => {
 
         <Button
           onClick={() => setIsFormOpen(true)}
-          className="w-full bg-[#213b5d] hover:bg-[#b44d35]"
+          className="w-full bg-[#E8470A] hover:bg-[#FF6B2B]"
         >
           <PlusCircle size={20} className="mr-2" />
           Crear empresa
@@ -163,7 +163,7 @@ const EmpresasManagement = () => {
                 key={e.id}
                 className="flex items-center gap-4 p-4 bg-white rounded-lg shadow border"
               >
-                <Building2 className="h-8 w-8 text-[#213b5d]" />
+                <Building2 className="h-8 w-8 text-[#E8470A]" />
                 <div className="flex-1">
                   <p className="font-medium">{e.nombre}</p>
                   <p className="text-sm text-gray-500">CUIT: {e.cuit}</p>

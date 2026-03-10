@@ -11,7 +11,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore"; // Importar Firestore utilities
 import { auth, db } from "@/firebase";
-import AppLogo from "@/components/AppLogo";
+import VialtoLogo from "@/components/VialtoLogo";
 
 const LoginAdmin = () => {
   const [email, setEmail] = useState("");
@@ -96,11 +96,10 @@ const LoginAdmin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#213b5d] flex flex-col items-center justify-center px-4">
-      {/* Logo, título y subtítulo */}
+    <div className="min-h-screen bg-[#1A1A1A] flex flex-col items-center justify-center px-4">
       <div className="text-center mb-8">
-        <AppLogo alt="Logo" className="w-32 mx-auto mb-4 sm:w-40" />
-        <h2 className="text-xl font-bold text-white sm:text-2xl">Iniciar Sesión</h2>
+        <VialtoLogo variant="dark" showTagline className="mx-auto mb-4" />
+        <h2 className="text-xl font-display font-normal text-white sm:text-2xl mt-4 tracking-tight">Iniciar Sesión</h2>
         <p className="text-sm text-gray-300">Sistema de registro de cargas de combustible</p>
       </div>
 
@@ -114,7 +113,7 @@ const LoginAdmin = () => {
             placeholder="Correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border-gray-300 focus:border-[#213b5d]"
+            className="w-full border-gray-300 focus:border-[#E8470A] focus:ring-[#E8470A]"
             required
           />
           {/* Campo de contraseña */}
@@ -123,13 +122,13 @@ const LoginAdmin = () => {
             placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border-gray-300 focus:border-[#213b5d]"
+            className="w-full border-gray-300 focus:border-[#E8470A] focus:ring-[#E8470A]"
             required
           />
           {/* Botón de inicio de sesión */}
           <Button
             type="submit"
-            className="w-full bg-[#213b5d] hover:bg-[#b44d35] text-white transition-colors py-2"
+            className="w-full bg-[#E8470A] hover:bg-[#FF6B2B] text-white transition-colors py-2"
           >
             Iniciar Sesión
           </Button>
@@ -139,7 +138,7 @@ const LoginAdmin = () => {
         <div className="text-center">
           <button
             onClick={handleForgotPassword}
-            className="text-[#213b5d] font-medium hover:underline text-sm"
+            className="text-[#E8470A] font-medium hover:underline text-sm"
           >
             ¿Olvidaste tu contraseña?
           </button>
@@ -188,7 +187,7 @@ const LoginAdmin = () => {
             <button
               type="button"
               onClick={() => navigate("/registro-empresa")}
-              className="text-[#213b5d] font-medium hover:underline"
+              className="text-[#E8470A] font-medium hover:underline"
             >
               Registrar empresa
             </button>
@@ -196,7 +195,7 @@ const LoginAdmin = () => {
           <button
             type="button"
             onClick={() => navigate("/")}
-            className="text-sm text-[#213b5d] font-medium hover:underline"
+            className="text-sm text-[#E8470A] font-medium hover:underline"
           >
             ← Volver
           </button>
@@ -204,15 +203,8 @@ const LoginAdmin = () => {
       </div>
 
       {/* Texto de desarrollo y enlace */}
-      <div className="mt-8 text-center text-gray-400 text-sm">
-        <a
-          href="https://capassotech.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:underline"
-        >
-          Desarrollado por CapassoTech
-        </a>
+      <div className="mt-8 text-center text-white/50 text-sm font-sans">
+        <span>Vialto · Sistema de registro de combustible</span>
       </div>
     </div>
   );
