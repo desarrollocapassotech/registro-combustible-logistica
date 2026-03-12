@@ -1,8 +1,85 @@
 import { useState, useEffect } from "react";
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoadData } from "@/types/load";
+
+function formatAmount(value: string, prefix = ""): string {
+  const onlyDigitsAndComma = value.replace(/[^\d,]/g, "");
+  const [intPart = "", decPart = ""] = onlyDigitsAndComma.split(",");
+  const intClean = intPart.replace(/\D/g, "");
+  const decClean = decPart.replace(/\D/g, "").slice(0, 2);
+  const intFormatted = intClean.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const result = decClean ? `${intFormatted},${decClean}` : intFormatted;
+  return result ? `${prefix}${result}` : "";
+}
+
+function formatAmountFromNumber(n: number, prefix = ""): string {
+  if (!Number.isFinite(n)) return "";
+  const fixed = n.toFixed(2);
+  const [int, dec] = fixed.split(".");
+  const intFormatted = int.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return `${prefix}${intFormatted},${dec}`;
+}
+
+function parseAmount(formatted: string): number {
+  const normalized = formatted.replace(/^\$/, "").replace(/\./g, "").replace(",", ".");
+  return parseFloat(normalized) || 0;
+}
+
+function formatInteger(value: string): string {
+  const onlyDigits = value.replace(/\D/g, "");
+  return onlyDigits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function formatIntegerFromNumber(n: number): string {
+  if (!Number.isFinite(n)) return "";
+  const int = Math.floor(n).toString();
+  return int.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function parseInteger(formatted: string): number {
+  const normalized = formatted.replace(/\./g, "");
+  return parseInt(normalized, 10) || 0;
+}
+
+function formatPatente(value: string): string {
+  const raw = value
+    .replace(/\s/g, "")
+    .replace(/[^A-Za-z0-9]/g, "")
+    .toUpperCase()
+    .slice(0, 7);
+  if (!raw) return "";
+  const letters = raw.replace(/\d/g, "");
+  const digits = raw.replace(/\D/g, "");
+  const firstDigitIdx = raw.search(/\d/);
+
+  // AB 123 CD: la posición del primer dígito es 2 (AB|123)
+  // ABC 123: la posición del primer dígito es 3 (ABC|123) o 0 si empieza con números (123|ABC)
+  if (firstDigitIdx === 2 && digits.length >= 1) {
+    const p1 = letters.slice(0, 2);
+    const p2 = digits.slice(0, 3);
+    const p3 = letters.slice(2, 4);
+    const parts = [p1, p2, p3].filter(Boolean);
+    return parts.join(" ");
+  }
+  // ABC 123 (o parcial): 3 letras + 3 números
+  const l = letters.slice(0, 3);
+  const d = digits.slice(0, 3);
+  if (!l) return d;
+  return d ? `${l} ${d}` : l;
+}
+
+function parsePatente(formatted: string): string {
+  return formatted.replace(/\s/g, "").toUpperCase();
+}
 
 interface NewLoadFormProps {
   onSubmit: (data: any) => void;
@@ -21,6 +98,8 @@ const NewLoadForm = ({
 }: NewLoadFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLicensePlateEnabled, setIsLicensePlateEnabled] = useState(false);
+  const [isStationSheetOpen, setIsStationSheetOpen] = useState(false);
+  const [isDateSheetOpen, setIsDateSheetOpen] = useState(false);
 
   // Estado del formulario
   const [formData, setFormData] = useState({
@@ -39,18 +118,31 @@ const NewLoadForm = ({
     if (defaultValues) {
       setFormData({
         driverName: defaultValues.driverName,
-        licensePlate: defaultValues.licensePlate,
+        licensePlate: formatPatente(defaultValues.licensePlate || ""),
         serviceStation: defaultValues.serviceStation || "YPF",
-        liters: defaultValues.liters.toString(),
-        totalAmount: defaultValues.totalAmount.toString(),
-        kilometers: defaultValues.kilometers?.toString() || "",
+        liters: formatAmountFromNumber(
+          typeof defaultValues.liters === "number"
+            ? defaultValues.liters
+            : parseFloat(String(defaultValues.liters).replace(",", ".")) || 0
+        ),
+        totalAmount: formatAmountFromNumber(
+          typeof defaultValues.totalAmount === "number"
+            ? defaultValues.totalAmount
+            : parseFloat(String(defaultValues.totalAmount).replace(",", ".")) || 0,
+          "$"
+        ),
+        kilometers: formatIntegerFromNumber(
+          typeof defaultValues.kilometers === "number"
+            ? defaultValues.kilometers
+            : parseInt(String(defaultValues.kilometers || "").replace(/\./g, ""), 10) || 0
+        ),
         date: defaultValues.date ? new Date(defaultValues.date) : new Date(),
         paymentMethod: defaultValues.paymentMethod || null,
       });
     } else {
       setFormData({
         driverName: driverName || "",
-        licensePlate: licensePlate || "",
+        licensePlate: formatPatente(licensePlate || ""),
         serviceStation: "YPF",
         liters: "",
         totalAmount: "",
@@ -68,10 +160,11 @@ const NewLoadForm = ({
     try {
       await onSubmit({
         ...formData,
+        licensePlate: parsePatente(formData.licensePlate),
         date: formData.date.toISOString(),
-        liters: parseFloat(formData.liters),
-        totalAmount: parseFloat(formData.totalAmount),
-        kilometers: parseFloat(formData.kilometers),
+        liters: parseAmount(formData.liters),
+        totalAmount: parseAmount(formData.totalAmount),
+        kilometers: parseInteger(formData.kilometers),
         paymentMethod: formData.paymentMethod,
       });
     } catch (error) {
@@ -81,186 +174,279 @@ const NewLoadForm = ({
     }
   };
 
+  const inputBaseClass =
+    "mt-2 min-h-[48px] w-full text-base py-3 px-4 touch-manipulation bg-white border-gray-300 shadow-sm focus:border-[#E8470A] focus:ring-[#E8470A]";
+
   return (
-    <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-      <DialogHeader>
-        <DialogTitle className="text-center text-xl sm:text-lg">
-          {defaultValues ? "Editar Carga" : "Nueva Carga"}
-        </DialogTitle>
-      </DialogHeader>
-      <form onSubmit={handleSubmit} className="space-y-4 p-4">
-        {/* Nombre del Chofer */}
-        {formData.driverName && (
-          <div>
-            <label className="text-sm font-medium text-gray-700">Nombre del Chofer</label>
-            <Input
-              value={formData.driverName}
-              readOnly
-              className="mt-1 cursor-not-allowed bg-gray-100"
-              placeholder="Ingrese nombre completo"
-            />
-          </div>
-        )}
-
-        {/* Patente del Camión */}
-        <div>
-          <label className="text-sm font-medium text-gray-700">Patente del Camión</label>
-          <div className="flex items-center space-x-2">
-            <Input
-              required
-              value={formData.licensePlate}
-              onChange={(e) =>
-                setFormData({ ...formData, licensePlate: e.target.value })
-              }
-              className="mt-1 w-full"
-              placeholder="Ej: AB123CD"
-              disabled={!isLicensePlateEnabled}
-            />
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                checked={isLicensePlateEnabled}
-                onChange={(e) =>
-                  setIsLicensePlateEnabled(e.target.checked)
-                }
-                className="mr-2"
-              />
-              <span className="text-xs sm:text-sm text-gray-700">
-                Habilitar edición
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Fecha */}
-        <div>
-          <label className="text-sm font-medium text-gray-700">Fecha</label>
-          <Input
-            required
-            type="date"
-            value={formData.date.toISOString().split("T")[0]}
-            onChange={(e) =>
-              setFormData({ ...formData, date: new Date(e.target.value) })
-            }
-            className="mt-1 w-full"
-          />
-        </div>
-
-        {/* Litros Cargados */}
-        <div>
-          <label className="text-sm font-medium text-gray-700">
-            Litros Cargados
-          </label>
-          <Input
-            required
-            type="number"
-            step="0.01"
-            value={formData.liters}
-            onChange={(e) =>
-              setFormData({ ...formData, liters: e.target.value })
-            }
-            className="mt-1 w-full"
-            placeholder="0.00"
-          />
-        </div>
-
-        {/* Monto Total */}
-        <div>
-          <label className="text-sm font-medium text-gray-700">
+    <DialogContent
+      className="fixed inset-0 z-50 h-dvh w-full max-w-none translate-x-0 translate-y-0 rounded-none border-0 flex flex-col gap-0 p-0 sm:inset-auto sm:left-[50%] sm:top-[50%] sm:right-auto sm:bottom-auto sm:h-auto sm:max-w-md sm:max-h-[90vh] sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border sm:grid sm:gap-4 sm:p-6"
+    >
+      <div className="flex flex-col flex-1 min-h-0 sm:flex-none sm:min-h-0">
+        <DialogHeader className="flex-shrink-0 px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-4 border-b border-gray-100 sm:px-0 sm:pt-0 sm:pb-0 sm:border-0 space-y-2">
+          <DialogTitle className="text-center text-xl sm:text-lg">
+            {defaultValues ? "Editar Carga" : "Nueva Carga"}
+          </DialogTitle>
+          {formData.driverName && (
+            <p className="text-center text-sm text-gray-600 font-medium">
+              {formData.driverName}
+            </p>
+          )}
+        </DialogHeader>
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-y-auto overscroll-contain p-4 pb-[max(1.5rem,calc(1.5rem+env(safe-area-inset-bottom)))] space-y-4 sm:flex-none sm:overflow-visible sm:max-h-none sm:pb-4"
+        >
+        {/* Monto Total - estilo destacado */}
+        <div className="rounded-xl bg-gray-50 p-4 border border-gray-200">
+          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
             Monto Total
           </label>
           <Input
             required
-            type="number"
-            step="0.1"
+            type="text"
+            inputMode="decimal"
             value={formData.totalAmount}
             onChange={(e) =>
-              setFormData({ ...formData, totalAmount: e.target.value })
+              setFormData({ ...formData, totalAmount: formatAmount(e.target.value, "$") })
             }
-            className="mt-1 w-full"
-            placeholder="Ej: $999"
+            className="min-h-[64px] w-full text-2xl sm:text-3xl font-semibold py-4 px-5 touch-manipulation bg-white border-2 border-gray-200 rounded-lg shadow-sm text-center placeholder:text-gray-400 focus:border-[#E8470A] focus:ring-2 focus:ring-[#E8470A]/20"
+            placeholder="$0,00"
           />
+        </div>
+
+        {/* Método de Pago - botones tipo segmented control para mobile */}
+        {(defaultValues || formData.paymentMethod) && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Método de Pago
+            </label>
+            <div
+              role="group"
+              aria-label="Método de pago"
+              className="grid grid-cols-2 gap-2"
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData({ ...formData, paymentMethod: "EFECTIVO" })
+                }
+                className={`min-h-[52px] rounded-xl text-base font-medium touch-manipulation transition-colors border-2 ${
+                  formData.paymentMethod === "EFECTIVO"
+                    ? "border-[#E8470A] bg-[#E8470A]/10 text-[#E8470A]"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 active:bg-gray-50"
+                }`}
+              >
+                Efectivo
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData({ ...formData, paymentMethod: "TARJETA" })
+                }
+                className={`min-h-[52px] rounded-xl text-base font-medium touch-manipulation transition-colors border-2 ${
+                  formData.paymentMethod === "TARJETA"
+                    ? "border-[#E8470A] bg-[#E8470A]/10 text-[#E8470A]"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 active:bg-gray-50"
+                }`}
+              >
+                Tarjeta
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Litros Cargados */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Litros Cargados
+          </label>
+          <Input
+            required
+            type="text"
+            inputMode="decimal"
+            value={formData.liters}
+            onChange={(e) =>
+              setFormData({ ...formData, liters: formatAmount(e.target.value) })
+            }
+            className={inputBaseClass}
+            placeholder="Ej: 1.234,56"
+          />
+        </div>
+
+        {/* Estación de Servicio - abre sheet al tocar */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Estación de Servicio
+          </label>
+          <button
+            type="button"
+            onClick={() => setIsStationSheetOpen(true)}
+            className="min-h-[52px] w-full rounded-xl text-base font-medium touch-manipulation text-left px-4 py-3 bg-white border-2 border-gray-200 hover:border-gray-300 active:bg-gray-50 flex items-center justify-between"
+          >
+            <span className={formData.serviceStation ? "text-gray-900" : "text-gray-500"}>
+              {formData.serviceStation || "Seleccionar estación"}
+            </span>
+            <svg
+              className="h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <Sheet open={isStationSheetOpen} onOpenChange={setIsStationSheetOpen}>
+            <SheetContent side="bottom" className="rounded-t-2xl">
+              <SheetHeader>
+                <SheetTitle>Estación de Servicio</SheetTitle>
+              </SheetHeader>
+              <div className="grid grid-cols-2 gap-2 mt-6 pb-8">
+                {["YPF", "GOTTIG", "AGRO", "AXION", "LA PAZ", "OTRA"].map(
+                  (station) => (
+                    <button
+                      key={station}
+                      type="button"
+                      onClick={() => {
+                        setFormData({ ...formData, serviceStation: station });
+                        setIsStationSheetOpen(false);
+                      }}
+                      className={`min-h-[52px] rounded-xl text-base font-medium touch-manipulation transition-colors border-2 ${
+                        formData.serviceStation === station
+                          ? "border-[#E8470A] bg-[#E8470A]/10 text-[#E8470A]"
+                          : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 active:bg-gray-50"
+                      }`}
+                    >
+                      {station}
+                    </button>
+                  )
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
 
         {/* Kilometros */}
         <div>
-          <label className="text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Kilómetros
           </label>
           <Input
             required
-            type="number"
-            step="1"
+            type="text"
+            inputMode="numeric"
             value={formData.kilometers}
             onChange={(e) =>
-              setFormData({ ...formData, kilometers: e.target.value })
+              setFormData({ ...formData, kilometers: formatInteger(e.target.value) })
             }
-            className="mt-1 w-full"
-            placeholder="Ej: 10000"
+            className={inputBaseClass}
+            placeholder="Ej: 10.000"
           />
         </div>
 
-        {/* Estación de Servicio */}
+        {/* Fecha - Sheet con calendario al tocar */}
         <div>
-          <label className="text-sm font-medium text-gray-700">
-            Estación de Servicio
-          </label>
-          <select
-            required
-            value={formData.serviceStation}
-            onChange={(e) =>
-              setFormData({ ...formData, serviceStation: e.target.value })
-            }
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#E8470A]"
+          <span className="block text-sm font-medium text-gray-700 mb-2">
+            Fecha
+          </span>
+          <button
+            type="button"
+            onClick={() => setIsDateSheetOpen(true)}
+            className="min-h-[52px] w-full rounded-xl text-base font-medium touch-manipulation flex items-center justify-between px-4 py-3 bg-white border-2 border-gray-200 hover:border-gray-300 active:bg-gray-50 text-left"
           >
-            <option value="YPF">YPF</option>
-            <option value="GOTTIG">GOTTIG</option>
-            <option value="AGRO">AGRO</option>
-            <option value="AXION">AXION</option>
-            <option value="LA PAZ">LA PAZ</option>
-            <option value="OTRA">OTRA</option>
-          </select>
+            <span className="text-gray-900">
+              {formData.date.toLocaleDateString("es-AR", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </span>
+            <svg
+              className="h-5 w-5 text-gray-400 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+          </button>
+          <Sheet open={isDateSheetOpen} onOpenChange={setIsDateSheetOpen}>
+            <SheetContent side="bottom" className="rounded-t-2xl">
+              <SheetHeader>
+                <SheetTitle>Seleccionar fecha</SheetTitle>
+              </SheetHeader>
+              <div className="py-4 pb-8">
+                <Calendar
+                  mode="single"
+                  selected={formData.date}
+                  onSelect={(date) => {
+                    if (date) {
+                      setFormData({ ...formData, date });
+                      setIsDateSheetOpen(false);
+                    }
+                  }}
+                  classNames={{
+                    cell: "h-12 w-12 p-0",
+                    day: "h-12 w-12 text-base",
+                  }}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
 
-        {/* Método de Pago - Mostrar solo si es nueva carga o si ya tiene valor */}
-        {(defaultValues || formData.paymentMethod) && (
-          <div>
+        {/* Patente del Camión - al final */}
+        <div>
+          <div className="flex items-center justify-between gap-2 mb-1">
             <label className="text-sm font-medium text-gray-700">
-              Método de Pago
+              Patente del Camión
             </label>
-            <select
-              required
-              value={formData.paymentMethod || "TARJETA"} // Si es edición pero no tiene valor, usar "TARJETA"
-              onChange={(e) =>
-                setFormData({ ...formData, paymentMethod: e.target.value })
-              }
-              className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#E8470A]"
+            <button
+              type="button"
+              onClick={() => setIsLicensePlateEnabled((v) => !v)}
+              className="text-xs font-medium text-[#E8470A] hover:underline touch-manipulation"
             >
-              <option value="EFECTIVO">Efectivo</option>
-              <option value="TARJETA">Tarjeta</option>
-            </select>
+              {isLicensePlateEnabled ? "Bloquear" : "Editar"}
+            </button>
           </div>
-        )}
+          <Input
+            required
+            value={formData.licensePlate}
+            onChange={(e) =>
+              setFormData({ ...formData, licensePlate: formatPatente(e.target.value) })
+            }
+            inputMode="text"
+            autoCapitalize="characters"
+            className={`${inputBaseClass} ${!isLicensePlateEnabled ? "bg-gray-100 text-gray-700" : ""}`}
+            placeholder="AB 123 CD o ABC 123"
+            disabled={!isLicensePlateEnabled}
+          />
+        </div>
 
         {/* Botones de acción */}
-        <div className="flex justify-end space-x-2 pt-4">
+        <div className="flex flex-col-reverse gap-3 pt-6 sm:flex-row sm:justify-end sm:space-x-2 sm:pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="w-full sm:w-auto"
+            className="w-full min-h-[48px] text-base touch-manipulation sm:w-auto sm:min-h-9"
           >
             Cancelar
           </Button>
           <Button
             type="submit"
-            className="w-full sm:w-auto bg-[#E8470A] hover:bg-[#FF6B2B]"
+            className="w-full min-h-[48px] text-base touch-manipulation bg-[#E8470A] hover:bg-[#FF6B2B] sm:w-auto sm:min-h-9"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Cargando..." : "Guardar"}
           </Button>
         </div>
-      </form>
+        </form>
+      </div>
     </DialogContent>
   );
 };
