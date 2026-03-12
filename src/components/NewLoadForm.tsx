@@ -81,6 +81,27 @@ function parsePatente(formatted: string): string {
   return formatted.replace(/\s/g, "").toUpperCase();
 }
 
+function isPatenteMercosur(value: string): boolean {
+  const raw = value.replace(/\s/g, "").replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+  const firstDigitIdx = raw.search(/\d/);
+  return (
+    firstDigitIdx === 2 ||
+    (raw.length === 2 && /^[A-Z]{2}$/.test(raw))
+  );
+}
+
+function isPatenteAbc123(value: string): boolean {
+  const raw = value.replace(/\s/g, "").replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+  if (!raw) return false;
+  const firstDigitIdx = raw.search(/\d/);
+  return firstDigitIdx === 3 || firstDigitIdx === 0;
+}
+
+function showPlateDesign(value: string): boolean {
+  if (!value.trim()) return true; // vacío: por defecto diseño tipo 1 (Mercosur)
+  return !isPatenteAbc123(value);
+}
+
 interface NewLoadFormProps {
   onSubmit: (data: any) => void;
   onCancel: () => void;
@@ -399,11 +420,11 @@ const NewLoadForm = ({
           </Sheet>
         </div>
 
-        {/* Patente del Camión - al final */}
+        {/* Patente del vehículo - al final */}
         <div>
-          <div className="flex items-center justify-between gap-2 mb-1">
+          <div className="flex items-center justify-between gap-2 mb-2">
             <label className="text-sm font-medium text-gray-700">
-              Patente del Camión
+              Patente del vehículo
             </label>
             <button
               type="button"
@@ -413,18 +434,84 @@ const NewLoadForm = ({
               {isLicensePlateEnabled ? "Bloquear" : "Editar"}
             </button>
           </div>
-          <Input
-            required
-            value={formData.licensePlate}
-            onChange={(e) =>
-              setFormData({ ...formData, licensePlate: formatPatente(e.target.value) })
-            }
-            inputMode="text"
-            autoCapitalize="characters"
-            className={`${inputBaseClass} ${!isLicensePlateEnabled ? "bg-gray-100 text-gray-700" : ""}`}
-            placeholder="AB 123 CD o ABC 123"
-            disabled={!isLicensePlateEnabled}
-          />
+          {(() => {
+            const isMercosur = showPlateDesign(formData.licensePlate);
+            return (
+              <div
+                className={`relative overflow-hidden aspect-[2.8/1] max-w-[280px] mx-auto shadow-md ${
+                  isMercosur
+                    ? "rounded-lg border-2 border-black"
+                    : "rounded-xl border-2 border-gray-300 bg-gradient-to-b from-gray-100 to-gray-200"
+                }`}
+              >
+                {/* Capa decorativa - diseño Mercosur (AB 123 CD) */}
+                {isMercosur && (
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-0 left-0 right-0 h-[26%] min-h-[28px] bg-[#003366] flex items-center justify-between px-3 py-1">
+                      <span className="text-white text-[9px] sm:text-[10px] font-bold tracking-[0.15em] flex-1 text-center select-none drop-shadow-sm">
+                        REPÚBLICA ARGENTINA
+                      </span>
+                      <div className="w-6 h-4 rounded-sm overflow-hidden flex flex-col shrink-0 border border-white/50 shadow-sm">
+                        <div className="h-1/3 bg-[#74ACDF]" />
+                        <div className="h-1/3 bg-white flex items-center justify-center">
+                          <svg viewBox="0 0 32 32" className="w-3.5 h-3.5 shrink-0">
+                            <circle cx="16" cy="16" r="6" fill="#F4B800" />
+                            {[...Array(16)].map((_, i) => {
+                              const a = (i * 22.5 * Math.PI) / 180;
+                              const r1 = 6; const r2 = 11;
+                              const x1 = 16 + r1 * Math.cos(a); const y1 = 16 + r1 * Math.sin(a);
+                              const x2 = 16 + r2 * Math.cos(a); const y2 = 16 + r2 * Math.sin(a);
+                              return i % 2 === 0 ? (
+                                <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F4B800" strokeWidth="1" />
+                              ) : (
+                                <path key={i} d={`M${x1} ${y1} Q${16 + 9*Math.cos(a)} ${16 + 9*Math.sin(a)} ${x2} ${y2}`} stroke="#F4B800" strokeWidth="1" fill="none" />
+                              );
+                            })}
+                            <circle cx="16" cy="14.5" r="0.6" fill="#B8860B" />
+                            <path d="M14.5 16.5 Q16 17.5 17.5 16.5" stroke="#B8860B" strokeWidth="0.5" fill="none" strokeLinecap="round" />
+                          </svg>
+                        </div>
+                        <div className="h-1/3 bg-[#74ACDF]" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 h-[74%] bg-white" />
+                  </div>
+                )}
+                {/* Capa decorativa - diseño ABC 123 */}
+                {!isMercosur && (
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-0 left-0 right-0 h-[24%] min-h-[24px] flex items-center justify-center px-3 py-1">
+                      <span className="text-[#1e5a8e] text-[11px] font-bold tracking-[0.2em] text-center uppercase">
+                        Argentina
+                      </span>
+                    </div>
+                    <div className="absolute left-3 right-3 top-[28%] bottom-[8%] bg-black rounded" />
+                  </div>
+                )}
+                {/* Un solo input - centrado en el área de contenido de cada diseño */}
+                <div
+                  className={`absolute left-0 right-0 flex items-center justify-center px-3 py-2 z-10 ${
+                    isMercosur ? "top-[26%] bottom-0" : "left-3 right-3 top-[28%] bottom-[8%]"
+                  }`}
+                >
+                  <input
+                    required
+                    value={formData.licensePlate}
+                    onChange={(e) =>
+                      setFormData({ ...formData, licensePlate: formatPatente(e.target.value) })
+                    }
+                    inputMode="text"
+                    autoCapitalize="characters"
+                    disabled={!isLicensePlateEnabled}
+                    placeholder={isMercosur ? "AB 123 CD" : "ABC 123"}
+                    className={`w-full h-full min-h-0 text-center font-bold tracking-[0.2em] bg-transparent border-0 outline-none disabled:bg-transparent disabled:cursor-not-allowed leading-tight ${
+                      isMercosur ? "text-4xl sm:text-5xl text-black placeholder:text-gray-300" : "text-5xl sm:text-6xl text-white placeholder:text-gray-500"
+                    }`}
+                  />
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Botones de acción */}
